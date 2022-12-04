@@ -25,12 +25,12 @@ class DataProcessing():
             param = self.methods[i].split(':')[1]
             if param == "":
                 re = eval(method)(self.data)
-                with open(filepath, 'a') as file:
+                with open(filepath, 'a', encoding='utf-8') as file:
                     file.write(method+str(re)+'\n')
             else:
                 tup = eval(param)#把带小括号的字符串转换为元组
                 re = eval(method)(self.data,*tup)
-                with open(filepath, 'a') as file:
+                with open(filepath, 'a', encoding='utf-8') as file:
                     file.write(method+str(re)+'\n')
 
     def data_transfor_dataframe(self):

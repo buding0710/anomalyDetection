@@ -39,7 +39,7 @@ class DataProcessing():
                 self.data = pd.read_csv(i[1], encoding='utf-8', sep=',', header=None)
                 self.processing_for_dataframe()
             elif 'csv' in i[0]:
-                self.data = pd.read_csv(i[1], encoding='utf-8', header=None)
+                self.data = pd.read_csv(i[1], encoding='utf-8', header=0)
                 self.processing_for_dataframe()
             elif 'xls' in i[0]:
                 self.data = pd.read_excel(i[1],header=None)

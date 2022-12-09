@@ -89,7 +89,7 @@ def relation_judge(data,result_column,judge_column,condition,judge_value,true_va
     return set(valueLis),li
 
 def normal_distribution_3(data,column_name):#当数据服从正态分布：距离平均值大于3δ，则认定该样本为异常值。
-# 也叫拉依达准则（3σ准则），适用于n>185时的样本判定，对于大于μ+3σ或小于μ-3σ的实验数据，视为异常数据。
+# 也叫拉依达准则（3σ准则），对于大于μ+3σ或小于μ-3σ的实验数据，视为异常数据。
 # 假定p<=0.05 则服从正态分布，否则不服从。
     li = []
     values = []

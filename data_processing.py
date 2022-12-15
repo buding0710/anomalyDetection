@@ -1,12 +1,16 @@
 #从excel/txt/csv/database里获取数据
+import base64
 import configparser
 import datetime
 import json
 import os
 import pandas as pd
 import pymysql
+from sqlalchemy.dialects.postgresql import psycopg2
+
 from anomalyDetection.find_anomaly import *
 from sqlalchemy import create_engine
+import ibm_db
 
 
 class DataProcessing():
@@ -45,7 +49,7 @@ class DataProcessing():
                 self.data = pd.read_excel(i[1],header=None)
                 self.processing_for_dataframe()
             elif 'mysql' in i[0]:
-                parm = eval(i[1])
+                param = eval(i[1])
                 # engine = create_engine("mysql+pymysql://%s:%s@%s/%s?charset=utf8', echo=True" %(parm[1].split(':')[1],parm[2].split(':')[1],parm[0].split(':')[1],parm[3].split(':')[1]))
                 # engine = create_engine("mysql+pymysql://{}:{}@{}/{}?charset=utf8', echo=True".format(parm[1].split(':')[1],parm[2].split(':')[1],parm[0].split(':')[1],parm[3].split(':')[1]))
                 # print(engine)
@@ -55,25 +59,27 @@ class DataProcessing():
                 # conn.close()
                 # engine.dispose()
 
-                conn = pymysql.connect(host=parm[0].split(':')[1],user=parm[1].split(':')[1],password=parm[2].split(':')[1],db=parm[3].split(':')[1])
-                temp_sql = "select * from " + parm[4].split(':')[1] + ";"
+                conn = pymysql.connect(host=param[0].split(':')[1],user=param[1].split(':')[1],password=param[2].split(':')[1],db=param[3].split(':')[1])
+                temp_sql = "select * from " + param[4].split(':')[1] + ";"
                 self.data = pd.read_sql(sql=temp_sql,con=conn)
                 conn.close()
                 self.processing_for_dataframe()
-            # elif 'db2' in i[0]:
-            #     parm = eval(i[1])
-            #     conn = ibm_db.connect(database="MICRO_11",hostname="localhost",port=50000,protocol="tcpip",uid="administrator",pwd="wyz","", "")
-            #     temp_sql = "select * from" + parm[4].split(':')[1] + ";"
-            #     self.data = pd.read_sql(sql=temp_sql, con=conn)
-            #     conn.close()
-            #     self.processing_for_dataframe()
-            # elif 'gassDB' in i[0]:
-            #     parm = eval(i[1])
-            #     conn = psycopg2.connect(dbname=dbname,user=user,password=password,host=host,port=port,)
-            #     temp_sql = "select * from" + parm[4].split(':')[1] + ";"
-            #     self.data = pd.read_sql(sql=temp_sql, con=conn)
-            #     conn.close()
-            #     self.processing_for_dataframe()
+            elif 'db2' in i[0]:
+                item = eval(i[1])
+                param = "DATEBASE=" + item[3].split(":")[1] + ";HOSTNAME=" + item[0].split(":")[1] + ";PORT=" + item[5].split(":")[1] + ";PROTOCOL=TOPIP;UID=" + item[1].split(":")[1] + ";PWD=" + base64.b64decode(item[2].split(":")[1].encode('utf-8')).decode('utf-8') + ";"
+                conn = ibm_db_dbi.connect(param,"", "")
+                temp_sql = "select * from " + item[4].split(':')[1] + ";"
+                self.data = pd.read_sql(sql=temp_sql, con=conn)
+                conn.close()
+                self.processing_for_dataframe()
+            elif 'gaussdb' in i[0]:
+                item = eval(i[1])
+                param = "dbname=" + item[0].split(":")[1] + " user=" + item[1].split(":")[1] + " password=" + item[2].split(":")[1] + " host=" + item[3].split(":")[1] + " port=" + item[4].split(":")[1]
+                conn = psycopg2.connect(param)
+                temp_sql = "select * from " + item[5].split(':')[1] + ";"
+                self.data = pd.read_sql(sql=temp_sql, con=conn)
+                conn.close()
+                self.processing_for_dataframe()
 
 
 
